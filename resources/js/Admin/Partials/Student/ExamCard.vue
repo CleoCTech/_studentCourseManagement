@@ -1,0 +1,105 @@
+<template>
+    <div class="col-span-full sm:col-span-6 xl:col-span-3 bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+   <div class="flex flex-col h-full">
+     <!-- Image -->
+     <!-- <img class="w-full" src="../../images/applications-image-01.jpg" width="286" height="160" alt="Application 01" /> -->
+     <!-- Card Content -->
+     <div class="grow flex flex-col p-5">
+       <!-- Card body -->
+       <div class="grow">
+         <!-- Header -->
+         <header class="mb-3">
+           <h3 class="text-lg text-slate-800 dark:text-slate-100 font-semibold">{{exam.name}}</h3>
+         </header>
+         <!-- Rating and price -->
+         <div class="flex flex-wrap justify-between items-center mb-4">
+           <!-- Rating -->
+           <div class="flex items-center space-x-2 mr-2">
+             <!-- Stars -->
+           
+             <!-- Rate -->
+             <!-- <div class="inline-flex text-sm font-medium text-amber-600">4.2</div> -->
+           </div>
+           <!-- Price -->
+           <div>
+             <div class="inline-flex text-sm font-medium bg-emerald-100 dark:bg-emerald-400/30 text-emerald-600 dark:text-emerald-400 rounded-full text-center px-2 py-0.5">{{exam.code}}</div>
+           </div>
+         </div>
+         <!-- Features list -->
+         <ul class="text-sm space-y-2 mb-5 dark:text-slate-300">
+           <li class="flex items-center">
+             <svg class="w-4 h-4 fill-current text-slate-400 dark:text-slate-500 shrink-0 mr-3" viewBox="0 0 16 16">
+               <path d="M15 15V5l-5-5H2c-.6 0-1 .4-1 1v14c0 .6.4 1 1 1h12c.6 0 1-.4 1-1zM3 2h6v4h4v8H3V2z" />
+             </svg>
+             <div > <span class="inline-flex text-sm font-medium text-amber-600">{{courseMaterials}}</span> Exam Attachments</div>
+           </li>
+           <br>
+           <hr class="my-6 border-t border-slate-200 dark:border-slate-700" />
+           <br>
+           <li class="flex items-center">
+             <svg class="w-4 h-4 fill-current text-slate-400 dark:text-slate-500 shrink-0 mr-3" viewBox="0 0 16 16">
+               <path d="M15.686 5.695L10.291.3c-.4-.4-.999-.4-1.399 0s-.4.999 0 1.399l.6.599-6.794 3.697-1-1c-.4-.399-.999-.399-1.398 0-.4.4-.4 1 0 1.4l1.498 1.498 2.398 2.398L.6 13.988 2 15.387l3.696-3.697 3.997 3.996c.5.5 1.199.2 1.398 0 .4-.4.4-.999 0-1.398l-.999-1 3.697-6.694.6.6c.599.6 1.199.2 1.398 0 .3-.4.3-1.1-.1-1.499zM8.493 11.79L4.196 7.494l6.695-3.697 1.298 1.299-3.696 6.694z" />
+             </svg>
+             <div v-html="truncatedDescription"></div>
+           </li>
+           
+           <!-- <li class="flex items-center">
+             <svg class="w-4 h-4 fill-current text-slate-400 dark:text-slate-500 shrink-0 mr-3" viewBox="0 0 16 16">
+               <path d="M13 7h2v6a1 1 0 01-1 1H4v2l-4-3 4-3v2h9V7zM3 9H1V3a1 1 0 011-1h10V0l4 3-4 3V4H3v5z" />
+             </svg>
+             <div>Access on mobile and TV</div>
+           </li> -->
+           
+         </ul>
+       </div>
+       <!-- Card footer -->
+       <div>
+           <!-- <Link :href="'/post/'+post.title.replace(/ /g,'-').toLowerCase()"> <img :src="'/storage/posts/cover_images/'+post.featured_image"  alt="image"/></Link> -->
+         <Link class="btn-sm w-full bg-indigo-500 hover:bg-indigo-600 text-white" :href="'exam/show/'+exam.uuid">Show More</Link>
+       </div>
+     </div>
+   </div>
+ </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+
+
+const props = defineProps({
+   description: String,
+   // courseMaterials: Number,
+   title: String,
+   uuid: String,
+})
+const courseMaterials = ref(0)
+const instructor = ref('instructor')
+const exam = ref([]);
+
+let maxLength = 200
+const truncatedDescription = computed(() => {
+ if (props.description.length > maxLength) {
+   return props.description.substring(0, maxLength) + '...';
+ }
+ return props.description;
+});
+
+onMounted(async () => {
+ try {
+   const response = await axios.get(`/exam/${props.uuid}`);
+   console.log('exam');
+       console.log(response);
+    exam.value = response.data.exam;
+    courseMaterials.value = response.data.attachmentsCount;
+
+ } catch (error) {
+   console.error('Error fetching data:', error);
+ }
+});
+
+
+</script>
+
+<style  scoped>
+
+</style>
